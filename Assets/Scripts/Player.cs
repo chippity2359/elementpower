@@ -62,3 +62,33 @@ public class Player : MonoBehaviour
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
 }
+public class CharacterController : MonoBehaviour
+{
+    public float moveSpeed = 5f;
+    private Vector3 characterScale;
+    private float characterScaleX;
+
+    void Start()
+    {
+        // Save the original scale
+        characterScale = transform.localScale;
+        characterScaleX = characterScale.x;
+    }
+
+    void Update()
+    {
+        // Example movement code
+        float moveX = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
+        transform.position += new Vector3(moveX, 0, 0);
+
+        // Flip the character
+        if (moveX < 0)
+        {
+            transform.localScale = new Vector3(-characterScaleX, characterScale.y, characterScale.z);
+        }
+        else if (moveX > 0)
+        {
+            transform.localScale = new Vector3(characterScaleX, characterScale.y, characterScale.z);
+        }
+    }
+}
