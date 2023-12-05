@@ -9,6 +9,11 @@ public class Player : MonoBehaviour
     public Transform groundCheck; // Transform that marks the position to check if grounded
     public float groundCheckRadius = 0.5f; // Radius of the ground check
     public int maxJumps = 3; // Maximum number of jumps
+    public Animator animator; // Animator for the player
+    public Transform attackPoint; // Point from where the attack will be detected
+    public float attackRange = 0.5f; // Range of the attack
+    public LayerMask enemyLayers; // Layer used to identify enemies
+
 
     private Rigidbody2D rb;
     private int jumpCount = 0;
@@ -54,41 +59,42 @@ public class Player : MonoBehaviour
             timeSinceLastJump = 0f; // Reset the timer on jump
             Debug.Log("Jumped! " + jumpCount + " times!");
         }
+        
+        if (Input.GetKeyDown(KeyCode.Space)) // Using space bar for attack
+        {
+            Attack();
+        }
+  
+    }
+    void Attack()
+    {
+        // Play attack animation
+        // animator.SetTrigger("Attack");
+
+        // Detect enemies in range of attack
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+        if (hitEnemies.Length > 0) {
+            Debug.Log("We hit " + hitEnemies.Length + " enemies!");
+            Gizmos.color = Color.green;
+        } else {
+            Gizmos.color = Color.red;
+        }
+
+        // Damage them
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            Debug.Log("We hit " + enemy.name);
+            // Add logic here to damage enemy
+        }
     }
 
     void OnDrawGizmos() // Optional: Visualize the ground check in the editor
     {
-        Gizmos.color = isGrounded ? Color.green : Color.red;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
-    }
-}
-public class CharacterController : MonoBehaviour
-{
-    public float moveSpeed = 5f;
-    private Vector3 characterScale;
-    private float characterScaleX;
 
-    void Start()
-    {
-        // Save the original scale
-        characterScale = transform.localScale;
-        characterScaleX = characterScale.x;
+        if (attackPoint == null) return;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
-    void Update()
-    {
-        // Example movement code
-        float moveX = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
-        transform.position += new Vector3(moveX, 0, 0);
-
-        // Flip the character
-        if (moveX < 0)
-        {
-            transform.localScale = new Vector3(-characterScaleX, characterScale.y, characterScale.z);
-        }
-        else if (moveX > 0)
-        {
-            transform.localScale = new Vector3(characterScaleX, characterScale.y, characterScale.z);
-        }
-    }
-}
+}   
