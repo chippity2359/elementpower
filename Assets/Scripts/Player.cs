@@ -69,7 +69,7 @@ public class Player : MonoBehaviour
     void Attack()
     {
         // Play attack animation
-        // animator.SetTrigger("Attack");
+        animator.SetTrigger("Attack");
 
         // Detect enemies in range of attack
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
@@ -86,6 +86,8 @@ public class Player : MonoBehaviour
         {
             Debug.Log("We hit " + enemy.name);
             // Add logic here to damage enemy
+
+            enemy.GetComponent<SlimeEnemy>().Hit();
         }
     }
 
