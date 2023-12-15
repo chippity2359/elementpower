@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+
 
 public class SlimeEnemy : MonoBehaviour
 {
@@ -6,6 +8,7 @@ public class SlimeEnemy : MonoBehaviour
     public float patrolDistance = 5f;
     public Transform groundDetection;
     public Animator animator; // Animator for the slime
+    private Rigidbody2D rb;
 
     private bool movingRight = true;
     private float initialX;
@@ -13,6 +16,7 @@ public class SlimeEnemy : MonoBehaviour
     void Start()
     {
         initialX = transform.position.x;
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -45,8 +49,17 @@ public class SlimeEnemy : MonoBehaviour
     // Example of an attack method
     public void Hit()
     {
-        Debug.Log("Hit!");
         animator.SetTrigger("HitTrigger");
+        rb.AddForce(Vector2.up * 2, ForceMode2D.Impulse);
+        rb.AddForce(Vector2.right * 4, ForceMode2D.Impulse);
+        moveSpeed = 5f;
+        StartCoroutine(ResetSpeed());
+    }
+
+    private IEnumerator ResetSpeed()
+    {
+        yield return new WaitForSeconds(3);
+        moveSpeed = 2f;
     }
 
     // Example of an attack method
